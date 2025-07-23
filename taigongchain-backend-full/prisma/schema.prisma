@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  wallet    String   @unique
+  nickname  String?
+  createdAt DateTime @default(now())
+  points    Int      @default(0)
+  nft       NFT[]
+}
+
+model NFT {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  ipfsHash   String
+  signature  String
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String   @default("staff")
+  createdAt DateTime @default(now())
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  adminId   Int
+  action    String
+  timestamp DateTime @default(now())
+}
